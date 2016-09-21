@@ -190,11 +190,11 @@ class MatchItemPage extends Component {
 			<div className="active-item">
                 <div className="title">
                     <span>
-                        <img src={item.home_team_info.logo}/>
+                        <img src={item.home_team_info.logo} className="logo"/>
                         {item.home_team_info.team_name}
                         &nbsp;&nbsp;&nbsp;&nbsp;VS&nbsp;&nbsp;&nbsp;&nbsp; 
                         {item.guest_team_info.team_name}
-                        <img src={item.guest_team_info.logo}/>
+                        <img src={item.guest_team_info.logo} className="logo"/>
                     </span>
                 </div>
                 <div className="title">
