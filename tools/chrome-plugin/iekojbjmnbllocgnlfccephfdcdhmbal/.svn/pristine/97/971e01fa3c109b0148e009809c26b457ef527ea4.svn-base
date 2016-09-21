@@ -1,0 +1,264 @@
+
+function Platform(platformId, listenerRequest) {
+    
+    var self = this;
+    self.id = platformId;
+    self.listeners = [];
+    self.expire = 180;
+    self.noPlays = null;
+    self.errorMessage = "";
+    
+    self.initialization = function(){
+        if(self.init()){
+            self.binding(self.urls);
+        }
+    }
+
+    self.init = function(){
+        return true;
+    }
+
+    self.binding = function(urls){
+        if(urls){
+            chrome.webRequest.onBeforeRequest.addListener(listenerRequest, {urls: urls});
+        }
+    }
+
+    self.beforeRequestHandler = function(details, stream, callback){
+        callback();
+    }
+
+    self.handlerTitle = function(title){
+        return Util.replaceString(title, self.replaceTitle, '');
+    };
+};
+
+var platforms = {
+    twitch: function(){
+        var self = this;
+        self.expire = 60;
+        self.urls = ["*://*.ttvnw.net/hls*.m3u8*"];
+        self.replaceTitle = '';
+        self.beforeRequestHandler = function(details, stream, callback){
+            var m3uUrl = details.url;
+            var baseUrl = m3uUrl.slice(0, m3uUrl.lastIndexOf('/') + 1);
+            $.get(m3uUrl, null, function(response){
+                var lines = response.match(/[^\r\n]+/g);
+                var segments = stream.segments;
+                if (lines) {
+                    lines.forEach(function(line) {
+                        var tdtg_time = line.match(/#ID3-EQUIV-TDTG:(.*)/);
+                        if (tdtg_time) {
+                            tdtg_time = tdtg_time[1];
+                            last_playlist_time = new Date(tdtg_time).getTime();
+                        }
+
+                        var duration = line.match(/#EXTINF:([\d\.]+).*/);
+                        if (duration) {
+                            last_duration = parseFloat(duration[1]);
+                        }
+                        if (line.indexOf('#') != 0 && !self.existSegment(baseUrl+line, segments)) {
+                            segments.push({
+                                expire: -1,
+                                url: baseUrl+line, 
+                                duration: last_duration, 
+                                playlist_timestamp: last_playlist_time,
+                                added_timestamp: new Date().getTime()
+                            });
+                        }
+                    });
+                }
+                callback({
+                    expire: -1,
+                    sendData: {},
+                    streamInfo: {},
+                    segments: self.updateSegment(segments, self.expire),
+                    playUrl: details.url
+                });
+            });
+        };
+        self.existSegment = function(url, segments){
+            var len = segments.length;
+            for (var i = 0; i < len; i++) {
+                if(segments[i].url == url){
+                    return true;
+                }
+            }
+            return false;
+        };
+        self.updateSegment = function(segments, expire){
+            var news = [];
+            var now = (new Date).getTime();
+            segments.forEach(function(segment){
+                if(segment && segment.added_timestamp >= now - expire*1000){
+                    news.push(segment);
+                }
+            });
+            return news;
+        };
+    },
+    huya: function(){
+        var self = this;
+        self.errorMessage = "当前直播线路0没法抓取，\n请切换到直播线路1";
+        self.urls = ['*://*.stream.huya.com/huyalive/*', '*://*/*.stream.huya.com/huyalive/*'];
+        self.noPlays = ['*://*.stream.huya.com/huyalive/*.flv*', '*://*/*.stream.huya.com/huyalive/*.flv*', '*://*/socket.io/*'];
+        self.replaceTitle = ' - 虎牙直播';
+        self.beforeRequestHandler = function(details, stream, callback){
+            var matchs = details.url.match(/stream\.huya\.com\/huyalive\/(\d*)-(\d*)-/);
+            if(matchs){
+                stream.errorMessage = "";
+                callback({
+                    expire: self.expire,
+                    sendData: {},
+                    streamInfo: {},
+                    segments: [{
+                        url: details.url,
+                        expire: (new Date).getTime() + self.expire * 1000
+                    }],
+                    playUrl: "http://weblbs.yystatic.com/s/"+matchs[1]+"/"+matchs[2]+"/huyacoop.swf"
+                });
+            }else{
+            }
+        };
+    },
+    douyutv: function(){
+        var self = this;
+        self.urls = ["*://*.douyu.com/swf_api/*"];
+        self.noPlays = ["*://*.douyu.com/live/*.flv*"];
+        self.replaceTitle = '-斗鱼 - 全民直播平台';
+        self.beforeRequestHandler = function(details, stream, callback){
+            $.get(details.url, null, function(data){
+                if(data.error == 0){
+                    callback({
+                        expire: self.expire,
+                        sendData: {},
+                        streamInfo: data.data,
+                        segments: [{
+                            url: data.data.rtmp_url + "/" + data.data.rtmp_live,
+                            expire: (new Date).getTime() + self.expire * 1000
+                        }],
+                        playUrl:"http://staticlive.douyu.com/common/share/play.swf?room_id="+data.data.room_id
+                    });
+                }
+            }, "json");
+        };
+    },
+    longzhu: function(){
+        var self = this;
+        self.urls = ["*://info.zb.video.qq.com/?*", "*://bk.info.zb.video.qq.com/?*", "*://*/flv1.plu.cn/live/*", "*://flvtx.plu.cn/lzlive/*"];
+        self.noPlays = ["*://info.zb.video.qq.com/?*", "*://bk.info.zb.video.qq.com/?*", "*://*/flv1.plu.cn/live/*"];
+        self.replaceTitle = '-龙珠直播,第一游戏直播平台';
+        self.beforeRequestHandler = function(details, stream, callback){
+            var info = {
+                expire: self.expire,
+                sendData: {},
+                streamInfo: {},
+                playUrl: stream.tab.url
+            };
+            if(details.url.indexOf("flv1.plu.cn/onlive/") != -1){
+                info.segments = [{url: details.url, expire: (new Date).getTime() + self.expire * 1000}];
+                callback(info);
+            }else{
+                $.get(details.url, null, function(data){
+                    if(!data.errinfo){
+                        info.segments = [{url: data.playurl, expire: (new Date).getTime() + self.expire * 1000}];
+                        callback(info);
+                    }
+                }, "json");
+            }
+        };
+    },
+    pandatv: function(){
+        var self = this;
+        self.urls = ["*://*.live.panda.tv/live_panda/*.flv*"];
+        self.noPlays = ["*://*.live.panda.tv/live_panda/*.flv*"];
+        self.replaceTitle = '_熊猫TV_最娱乐的直播平台_PandaTV';
+        self.beforeRequestHandler = function(details, stream, callback){
+            callback({
+                expire: self.expire,
+                sendData: {},
+                streamInfo: {},
+                segments: [{
+                    url: details.url,
+                    expire: (new Date).getTime() + self.expire * 1000
+                }],
+                playUrl: stream.tab.url
+            });
+        };
+    },
+    zhanqitv: function(){
+        var self = this;
+        self.urls = ["*://*.live.panda.tv/live_panda/*.flv*"];
+        self.noPlays = ["*://*.live.panda.tv/live_panda/*.flv*"];
+        self.replaceTitle = '';
+        self.beforeRequestHandler = function(details, stream, callback){
+        };
+    },
+    video: function(){
+        var self = this;
+        self.errorMessage = "暂不支持抓取该网站的视频，或者分析视频地址失败";
+        self.parse = function(url, callback){
+            var segments = [];
+            var methods = [self.parseByFlvcd, self.parseByShok];
+            methods.sort(function(){ return 0.5 - Math.random() });
+            for (var i = methods.length - 1; i >= 0; i--) {
+                segments = methods[i](url);
+                if(segments.length > 0){
+                    break;
+                }
+            };
+            callback({segments: segments, playUrl: url});
+        },
+        self.post = function(url, data){
+            var result = "";
+            $.ajax({  
+                type : "post",  
+                url : url,  
+                data : data,  
+                async : false,  
+                success : function(response){  
+                    result = response;  
+                }  
+            }); 
+            return result;
+        };
+        self.parseByFlvcd = function(url){
+            var api = "http://www.flvcd.com/parse.php?kw="+url+"&flag=one&format=super&go=1";
+            var content = self.post(api);
+            var segments = [];
+            var html = $(content);
+            $.each(html.find(".STYLE4 a"), function(index, element){
+                element = $(element);
+                if(element.attr("onclick") == "_alert();return false;"){
+                    segments.push({
+                        expire: -1,
+                        url: $(element).attr("href")
+                    });
+                }
+            });
+            return segments;
+        };
+        self.parseByShok = function(url){
+            var api = "http://www.shokdown.com/parse.php";
+            var content = self.post(api, {url: url});
+            var segments = [];
+            var start = content.indexOf("<b>一:点击或目标另存为下载:</b>");
+            var end = content.indexOf("<b>二:舒克客户端软件下载(推荐):</b>");
+            var html = $(content.substring(start, end));
+            var definition = "";
+            for (var i = html.length - 1; i >= 0; i--) {
+                element = $(html[i]);
+                if(element.attr("href")){
+                    segments.push({
+                        expire: -1,
+                        url: element.attr("href")
+                    })
+                }else if(html[i].tagName == 'FONT'){
+                    break;
+                }
+            };
+            return segments;
+        };
+    },
+
+}

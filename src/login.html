@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>UDB本地登陆</title>
+<style>
+  webview {
+    width:550px;
+    height:360px;
+  }
+</style>
+<webview id="foo" autosize="on" allowpopups></webview>
+<script type="text/javascript">
+  var electron = require('electron');
+  var config = require('./server/config');
+  var loginUrl = config.MANAGER_HOST + "?r=app/login";
+  var webview = document.getElementById("foo");
+  
+  webview.src = loginUrl;
+  webview.addEventListener('new-window', function(e) {
+    console.info(e.url)
+      if(e.url == 'http://close/'){
+          electron.ipcRenderer.send('quit');
+      }else{
+          electron.shell.openExternal(e.url);
+      }
+  });
+
+  webview.addEventListener("did-finish-load", function() {
+      var code = "$('.udbsdk_href').on('click', function(){window.open('http://close/')})";
+      webview.executeJavaScript(code);
+  });
+
+  webview.addEventListener('did-get-redirect-request', function(e){
+      electron.ipcRenderer.send('login');
+  });
+</script>
+</head>

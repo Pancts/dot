@@ -1,0 +1,21 @@
+{
+  "name": "electron-react-video",
+  "main": "main.js",
+  "version": "0.1.0",
+  "authors": [
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "font-awesome": "~4.3.0",
+    "bootstrap": "~3.3.5",
+    "ionicons": "^2.0.1",
+    "roboto-fontface": "^0.4.2"
+  }
+}

@@ -1,0 +1,46 @@
+﻿{
+	"manifest_version": 2,
+	"name": "直播抓取",
+	"version": "0.0.2",
+    "update_url": "http://chrome-capture.webdev.duowan.com/index.php?r=capture/upgrade",
+    "background": { "scripts": ["jquery-2.0.0.min.js", "socket.io-1.4.5.js", "socketHandler.js", "platformHandler.js", "streamHandler.js", "background.js"]},
+	"page_action": {
+		"default_icon": {
+            "19": "/images/logo.png",
+            "38": "/images/logo.png"
+        },
+		"default_title": "直播抓取", // shown in tooltip
+		"default_popup": "popup.html"
+	},
+    "icons": {
+        "16": "/images/logo.png",
+        "32": "/images/logo.png",
+        "48": "/images/logo.png",
+        "128": "/images/logo.png"
+    },
+    "commands": {
+        "captureClip": {
+            "description": "开始截取",
+            "suggested_key": {
+                "default": "Ctrl+Shift+4"
+            }
+        },
+        "startRecord": {
+            "description": "开始录制",
+            "suggested_key": {
+                "default": "Ctrl+Shift+7"
+            }
+        },
+        "stopRecord": {
+            "description": "结束录制",
+            "suggested_key": {
+                "default": "Ctrl+Shift+6"
+            }
+        }
+   },
+	"permissions": [ "storage", "cookies", "tabs", "activeTab", "webRequest", "webRequestBlocking", "notifications", "http://localhost/*", "*://*.ttvnw.net/", "*://*.twitch.tv/", "*://*.huya.com/*", "*://*.plays.tv/", "*://*.douyu.com/*", "*://*.longzhu.com/*", "*://*.panda.tv/*", "*://*.zhanqi.tv/*", "*://*.webdev.duowan.com/*", "\u003Call_urls>" , "proxy"],
+	"content_scripts":[{
+		"matches": [ "http://localhost/*", "*://*.twitch.tv/*", "*://*.huya.com/*", "*://*.douyu.com/*", "*://*.longzhu.com/*", "*://*.panda.tv/*", "*://*.zhanqi.tv/*", "*://*.webdev.duowan.com/*", "\u003Call_urls>"],
+		"js":["jquery-2.0.0.min.js", "content_script.js"]
+	}]
+}

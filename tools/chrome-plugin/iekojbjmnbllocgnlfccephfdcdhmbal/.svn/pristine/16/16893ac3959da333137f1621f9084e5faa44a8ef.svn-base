@@ -1,0 +1,20 @@
+function createStream(data, tab, socket){
+    return new Stream(data, tab, socket);
+};
+
+function Stream(data, tab, socket){
+    var self = this;
+    self.tab = tab;
+    self.tabId = tab.id;
+    self.status = 0;
+    self.socket = socket;
+    self.platform = null;
+    self.handlerListenerRequest = function(details){
+        if(details.tabId != -1){
+            var message = {id: self.tabId, url: self.tab.url,  streamUrl: details.url};
+            console.info(message)
+            self.socket.emit("live-record-start", message);
+        }
+    }
+
+}
