@@ -31,10 +31,14 @@ module.exports.login = function login(cookies, callback){
             'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.106 Safari/537.36'
         }
     }, function (error, response, body) {
-        if(response.statusCode == 200){
-            callback(null, JSON.parse(body))
-        } else {
-            callback(response.statusCode);
+        try{
+            if(response.statusCode == 200){
+                callback(null, JSON.parse(body))
+            } else {
+                callback(response.statusCode);
+            }
+        }catch(e){
+            callback("登陆失败：获取登陆结果失败");
         }
     });
 }
