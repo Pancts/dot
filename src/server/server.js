@@ -3,6 +3,7 @@ var proxy = require("./public/httpProxy");
 var logger = require("./utils/log");
 var handler = require("./public/handler");
 var route = require("./public/route");
+var router = require("./public/router");
 
 var proxy_port = process.env.APP_PROXY_PORT ? process.env.APP_PROXY_PORT : 11223;
 var socket_port = process.env.APP_SOCKET_PORT ? process.env.APP_SOCKET_PORT : 11224;
@@ -13,7 +14,7 @@ var server = require('http').createServer(function(req, res) {
     var host = req.headers.host, ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     switch(host){
         case local:
-            route.runAction(req, res);
+            router.runAction(req, res);
         break;
         default:
             proxy.web(req, res, { 

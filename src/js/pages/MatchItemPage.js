@@ -15,8 +15,10 @@ class MatchItemPage extends Component {
         super(props);
         this.state = {
             item: null,
+            guess: [],
         };
         this.getMatchInfo(this.props.match_pid);
+        //this.getGuessInfo(this.props.match_pid);
     }
 
     componentDidMount() {
@@ -25,6 +27,7 @@ class MatchItemPage extends Component {
 
     componentWillReceiveProps(nextProps){
         this.getMatchInfo(nextProps.match_pid);
+        //this.getGuessInfo(this.props.match_pid);
     }
 
     getMatchInfo(match_pid){
@@ -35,9 +38,27 @@ class MatchItemPage extends Component {
             return res.json();
         }).then(function(data) {
             if(data.hasOwnProperty("code") && data.code==1){
-                self.setState({
-                    item: data.result.data,
+                self.getGuessInfo(self.props.match_pid, function(guess){
+                    self.setState({
+                        item: data.result.data,
+                        guess: guess,
+                    });
                 });
+            }
+        });
+    }
+
+    getGuessInfo(match_pid, callback){
+        if(!callback) callback = function(){}
+        let self = this;
+        fetch(config.FRONTEND_HOST + '?r=guess/getguess&no_cache=1&match_pid='+match_pid)
+        .then(function(res) {
+            return res.json();
+        }).then(function(data) {
+            if(data.hasOwnProperty("code") && data.code==1){
+                callback(data.result.data)
+            }else{
+                callback([], data.message)
             }
         });
     }
@@ -74,6 +95,24 @@ class MatchItemPage extends Component {
         let resultArr = this.getResultArr();
         if(resultArr.hasOwnProperty(result)){
             return resultArr[result];
+        }else{
+            return {};
+        }
+
+    }
+
+    getGuessArr(){
+        return {
+            0: {name: "竞猜未开", className:"", bsStyle:"default"},
+            1: {name: "开启竞猜", className:" label-info", bsStyle:"info"},
+            9: {name: "结束竞猜", className:" label-danger", bsStyle:"danger"},
+        }
+    }
+
+    getGuess(guess){
+        let guessArr = this.getGuessArr();
+        if(guessArr.hasOwnProperty(guess)){
+            return guessArr[guess];
         }else{
             return {};
         }
@@ -117,6 +156,22 @@ class MatchItemPage extends Component {
         });
     }
 
+    handlerSelectGuess(item, key, event){
+        let self = this;
+        self.update({
+            r: "appguessapi/update",
+            match_id: item.match_id,
+            type: "guess_result",
+            status: key,
+        }, function(){
+            self.getGuessInfo(self.props.match_pid, function(guess){
+                self.setState({
+                    guess: guess,
+                });
+            });
+        });
+    }
+
     handleOpenUrl(url){
         shell.openExternal(url)
     }
@@ -135,17 +190,18 @@ class MatchItemPage extends Component {
             let liveUrl = config.Live_HOST + "?match_pid=" + self.state.item.match_pid + "&match_id=" + item.match_id;
             return (
                 <section>
-                <span className="label-title">
-                    <code>{item.match_id}</code>. 
-                    <span onClick={ self.handleOpenUrl.bind(this, liveUrl) }>第 {index+1} 场</span>
-                </span>
-                <span className="">
-                    <input type="text" className="input-file" disabled value={item.title}/>
-                    {self.renderStatusButton(item)}
-                    {self.renderResultButton(item)}
-                    <button onClick={self.handlerOpenLive.bind(self, item)}>直播</button> 
-                    <a className="label label-success" onClick={ self.handleCopyUrl.bind(this, liveUrl) }>复制直播间地址</a>
-                </span>
+                    <span className="label-title">
+                        <code>{item.match_id}</code>. 
+                        <span onClick={ self.handleOpenUrl.bind(this, liveUrl) }>第 {index+1} 场</span>
+                    </span>
+                    <span className="">
+                        <input type="text" className="input-file match-title" disabled value={item.title}/>
+                        {self.renderStatusButton(item)}
+                        {self.renderResultButton(item)}
+                        {self.renderGuessButton(item)}
+                        <button onClick={self.handlerOpenLive.bind(self, item)}>直播</button> 
+                        <a className="label label-success" onClick={ self.handleCopyUrl.bind(this, liveUrl) }>复制直播间地址</a>
+                    </span>
                 </section>
             );
         });
@@ -176,6 +232,27 @@ class MatchItemPage extends Component {
         })
         return (
             <SplitButton onSelect={this.handlerSelectResult.bind(this, macthItem)} bsStyle={activeResult.bsStyle} title={activeResult.name} id={`dropdown-basic-${status}`}>
+                {options}
+            </SplitButton>
+        );
+    }
+
+    renderGuessButton(macthItem) {
+        let self = this;
+        let guessArr = self.getGuessArr();
+        let status = 0;
+        self.state.guess.map((item, index) => {
+            if(item.type=="guess_result" && item.match_id == macthItem.match_id){
+                status = item.status;
+            }
+        })
+        let active = self.getGuess(status);
+        let options = Object.keys(guessArr).map((i) => {
+            let item = self.getGuess(i);
+            return (<MenuItem eventKey={i}>{ item.name }</MenuItem>)
+        })
+        return (
+            <SplitButton onSelect={this.handlerSelectGuess.bind(this, macthItem)} bsStyle={active.bsStyle} title={active.name} id={`dropdown-basic-${status}`}>
                 {options}
             </SplitButton>
         );

@@ -4,9 +4,9 @@
   "description": "A better way to manage your hosts.",
   "main": "browser.js",
   "scripts": {
+    "dev": "electron ./app/browser.js --dev",
     "start": "electron ./app/browser.js --test",
     "pro": "electron ./app/browser.js ",
-    "dev": "electron . --debug",
     "pack-mac": "electron-packager ./app dot-app --asar --asar-unpack-dir=tools  --overwrite --platform=x64 --arch=ia32 --icon=app/assets/images/icpn.ico --prune=true --out=out",
     "pack-win": "electron-packager ./app dot-app --asar --asar-unpack-dir=tools  --overwrite --platform=win32 --arch=ia32 --icon=app/assets/images/icpn.ico --prune=true --out=out",
     "installer": "node ./script/installer.js",

@@ -4,7 +4,7 @@ config.APP_VERSION = '2.1.1';
 
 var env = process.env.RUN_ENV ? process.env.RUN_ENV : "production";
 
-if(env == "develop"){
+if(env == "dev"){
     //开发环境
     config.MANAGER_HOST = 'http://video-match.webdev.duowan.com/manager/index.php';
     config.FRONTEND_HOST = 'http://video-match.webdev.duowan.com/frontend/index.php';

@@ -54,6 +54,8 @@ for(index in process.argv){
     let argv = process.argv[index];
     if(argv == "--test"){
         process.env.RUN_ENV = "test";
+    }else if(argv == "--dev"){
+        process.env.RUN_ENV = "dev";
     }
 }
 
