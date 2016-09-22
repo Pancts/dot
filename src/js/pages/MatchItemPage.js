@@ -185,6 +185,7 @@ class MatchItemPage extends Component {
         const self = this;
         const {item} = this.state;
         if(!item) return (<div></div>);
+        const startTimeFormat = moment(item.start_time*1000).format("YYYY-MM-DD HH:mm");
 
 		return (
 			<div className="active-item">
@@ -212,7 +213,7 @@ class MatchItemPage extends Component {
                 </section>
                 <section>
                     <span className="label-title">比赛时间</span>
-                    <span className="label-content"><code>{item.start_time}</code> - <code>{item.end_time}</code></span>
+                    <span className="label-content"><code>{startTimeFormat}</code></span>
                 </section>
 
                 { self.renderMatchList(item.match_list) } 
