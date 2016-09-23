@@ -104,8 +104,8 @@ class MatchItemPage extends Component {
     getGuessArr(){
         return {
             0: {name: "竞猜未开", className:"", bsStyle:"default"},
-            1: {name: "开启竞猜", className:" label-info", bsStyle:"info"},
-            9: {name: "结束竞猜", className:" label-danger", bsStyle:"danger"},
+            1: {name: "竞猜开启", className:" label-info", bsStyle:"info"},
+            9: {name: "竞猜结束", className:" label-danger", bsStyle:"danger"},
         }
     }
 
@@ -195,12 +195,12 @@ class MatchItemPage extends Component {
                         <span onClick={ self.handleOpenUrl.bind(this, liveUrl) }>第 {index+1} 场</span>
                     </span>
                     <span className="">
-                        <input type="text" className="input-file match-title" disabled value={item.title}/>
+                        <input type="text" title={item.title} className="input-file match-title" disabled value={item.title}/>
                         {self.renderStatusButton(item)}
                         {self.renderResultButton(item)}
                         {self.renderGuessButton(item)}
                         <button onClick={self.handlerOpenLive.bind(self, item)}>直播</button> 
-                        <a className="label label-success" onClick={ self.handleCopyUrl.bind(this, liveUrl) }>复制直播间地址</a>
+                        <button onClick={ self.handleCopyUrl.bind(this, liveUrl) }>复制</button>
                     </span>
                 </section>
             );
