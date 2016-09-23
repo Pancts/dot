@@ -159,7 +159,7 @@ class MatchItemPage extends Component {
     handlerSelectGuess(item, key, event){
         let self = this;
         self.update({
-            r: "appguessapi/update",
+            r: "appguessapi/updatebymatchid",
             match_id: item.match_id,
             type: "guess_result",
             status: key,

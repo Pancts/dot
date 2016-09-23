@@ -79,7 +79,7 @@ class VideoListPage extends React.Component {
 
     renderInfo(){
         let item = this.state.activeItem;
-        if(item == null) return "";
+        if(item == null) return <div className="video-info"></div>;
         let statusButton, submitButton, playButton = ""; 
         if(item.can_play == 1 ){
             submitButton = <button onClick={this.props.handlerSendVideo.bind(this.props.parent, item)} className="btn btn-info pull-right">插入</button>;

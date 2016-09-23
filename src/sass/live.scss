@@ -1,7 +1,104 @@
 $resource-box-width: 200px;
 $resource-box-top: 520px;
 $resource-box-bottom: 150px;
+$resource-box-guess-bottom: 250px;
 $resource-box-input-height: 108px;
+
+
+.nav-tabs:before,
+.nav-pills:before,
+.nav-tabs:after,
+.nav-pills:after {
+  display: table;
+  line-height: 0;
+  content: "";
+}
+
+.nav-tabs:after,
+.nav-pills:after {
+  clear: both;
+}
+
+.nav-tabs > li,
+.nav-pills > li {
+  float: left;
+}
+
+.nav-tabs > li > a,
+.nav-pills > li > a {
+  padding-right: 12px;
+  padding-left: 12px;
+  margin-right: 2px;
+  line-height: 14px;
+}
+
+.nav-tabs {
+  border-bottom: 1px solid #ddd;
+}
+
+.nav-tabs > li {
+  margin-bottom: -1px;
+}
+
+.nav-tabs > li > a {
+  padding-top: 8px;
+  padding-bottom: 8px;
+  line-height: 20px;
+  border: 1px solid transparent;
+  -webkit-border-radius: 4px 4px 0 0;
+     -moz-border-radius: 4px 4px 0 0;
+          border-radius: 4px 4px 0 0;
+}
+
+.nav-tabs > li > a:hover,
+.nav-tabs > li > a:focus {
+    cursor: pointer;
+    border-color: #eeeeee #eeeeee #dddddd;
+}
+
+.nav-tabs > .active > a,
+.nav-tabs > .active > a:hover,
+.nav-tabs > .active > a:focus {
+  color: #555555;
+  cursor: default;
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-bottom-color: transparent;
+}
+
+.badge {
+  display: inline-block;
+  padding: 2px 4px;
+  font-size: 11.844px;
+  font-weight: bold;
+  line-height: 14px;
+  color: #ffffff;
+  text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
+  white-space: nowrap;
+  vertical-align: baseline;
+  background-color: #999999;
+}
+
+.badge {
+  padding-right: 9px;
+  padding-left: 9px;
+  -webkit-border-radius: 9px;
+     -moz-border-radius: 9px;
+          border-radius: 9px;
+}
+
+.pre {
+    display: block;
+    padding: 9.5px;
+    margin: 0 0 10px;
+    font-size: 13px;
+    line-height: 1.42857143;
+    color: #333;
+    word-break: break-all;
+    background-color: #f5f5f5;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
 
 .main-container{
 
@@ -10,6 +107,7 @@ $resource-box-input-height: 108px;
 .live-container{
     .live-resource{
         width: $resource-box-width;
+        border-left: 1px solid #d6d6d6;
         backgroud:red;
         height: 100%;
         float: right;
@@ -17,7 +115,6 @@ $resource-box-input-height: 108px;
     }
     .live-manager{
         overflow: hidden;
-        border-right: 1px solid #d6d6d6;
         position: relative;
         height: 100%;
         padding: 0 5px;
@@ -88,7 +185,7 @@ $resource-box-input-height: 108px;
     }
 }
 
-.resource-video-box{
+.resource-video-box, .resource-guess-box{
     .box-title{
         background: #eee;
         height: 30px;
@@ -141,12 +238,83 @@ $resource-box-input-height: 108px;
         position: fixed;
         height: $resource-box-bottom;
         border-top: 1px solid #d6d6d6;
+        border-left: 1px solid #d6d6d6;
         .video-info-id{
             height: 34px;
             line-height: 34px;
         }
         textarea{
             width: 100%;
+        }
+    }
+
+    .guess-form{
+        background: #eee;
+        padding: 5px;
+        bottom: 0;
+        right: 0;
+        width: $resource-box-width;
+        position: fixed;
+        height: $resource-box-guess-bottom;
+        border-top: 1px solid #d6d6d6;
+        border-left: 1px solid #d6d6d6;
+        .guess-info-id{
+            height: 25px;
+            line-height: 25px;
+        }
+        textarea{
+            width: 100%;
+        }
+        .guess-info-button{
+
+        }
+        .guess-info-type{
+            margin-bottom: 5px;
+        }
+        .guess-info-option{
+            .guess-option{
+                width: 100%;
+                border: 1px solid #fff;
+                border-bottom: 1px solid #d6d6d6;
+                border-radius: 2px;
+                padding: 3px 10px;
+                transition: background-color 0.2s ease;
+                background-color: #fff;
+                &:focus {
+                    background-color: #fff;
+                }
+            }
+        }
+    }
+}
+
+.live-resource .resource-video-box, .live-resource .resource-guess-box{
+    display: none
+}
+
+.live-resource .active .resource-video-box, .live-resource .active .resource-guess-box{
+    display: block;
+}
+
+.live-resource .resource-guess-box{
+    .guess-item{
+        .guess-option{
+            list-style: none;
+            padding-left: 10px;
+        }
+    }
+    .box {
+        height: 360px;
+    }
+    .label-type{
+        padding: 6px;
+    }
+    .label-status{
+        padding: 5px;
+        border: none;
+        margin-left: 5px;
+        option {
+            padding: 5px 5px;
         }
     }
 }

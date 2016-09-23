@@ -11,6 +11,7 @@ import moment from 'moment';
 import drag from 'drag-and-drop-files';
 import $ from 'jquery';
 import VideoListPage from './VideoListPage';
+import GuessPage from './GuessPage';
 import util from '../utils/util';
 import EditorPage from './EditorPage';
 
@@ -29,9 +30,17 @@ class LiveManagerPage extends Component {
             matchTime: 0,
             fixMatchTime: false,
             formatTime: "",
-            //currMatchTime: 0,
+            activeTab: "guess",
         };
         this.imageSavePath = "./";
+        this.tabs = {
+            video:{
+                "title": "视频",
+            },
+            guess:{
+                "title": "竞猜",
+            }
+        }
         ipcRenderer.on(channel, this.handlerSendImage.bind(this));
     }
 
@@ -90,6 +99,7 @@ class LiveManagerPage extends Component {
     fixHeight(winHeight){
         $('.live-list').height(winHeight - 200);
         $('.resource-video-box .box').height(winHeight - 200);
+        $('.resource-guess-box .box').height(winHeight - 360);
     }
 
     getMatchMessage(id){
@@ -301,7 +311,7 @@ class LiveManagerPage extends Component {
             let content = item.content + item.title;
             return (
                 <div className="live-item">
-                    <pre>
+                    <div className="pre">
                         <button type="button"  className="close" onClick={this.handlerRemoveMessage.bind(this, item.message_id)}>×</button>
                         {/*<div className="live-time text-center"><code>{time}</code></div>*/}
                         <div className="live-time text-center">
@@ -310,7 +320,7 @@ class LiveManagerPage extends Component {
                         <div className="live-content"  dangerouslySetInnerHTML={{__html: content}}></div>
                         <div className="live-screenshot">{screenshot}</div>
                         <div className="live-video">{video}</div>
-                    </pre>
+                    </div>
                 </div>
             )
         });
@@ -335,17 +345,40 @@ class LiveManagerPage extends Component {
         )
     }
 
-	render() {
-        const {list} = this.state;
-		return (
-			<div className="live-container">
-                <div className="live-resource">
+    renderSidebar(){
+        let self = this;
+        let tabHtml = Object.keys(this.tabs).map((tab)=>{
+            let item = self.tabs[tab];
+            let active = self.state.activeTab == tab ? "active" : "";
+            return <li onClick={((n)=>{self.setState({activeTab:n})}).bind(self, tab)} className={active}><a>{item.title}</a></li>
+        })
+        return (
+            <div className="live-resource">
+                <ul className="nav nav-tabs">
+                    {tabHtml}
+                </ul>
+                <div className={this.state.activeTab == 'video' ? 'active' : ''}>
                     <VideoListPage 
                         parent={this} 
                         matchTime={ this.state.matchTime }
                         handlerSendVideo={this.handlerSendVideo}
                     />
                 </div>
+                <div className={this.state.activeTab == 'guess' ? 'active' : ''}>
+                    <GuessPage 
+                        matchId={this.state.match_id} 
+                        matchTime={ this.state.matchTime }
+                    />
+                </div>
+            </div>
+        )
+    }
+
+	render() {
+        const {list} = this.state;
+		return (
+			<div className="live-container">
+                { this.renderSidebar() }
                 <div className="live-manager">
                     <div className="live-content">
                         <div className="live-list">

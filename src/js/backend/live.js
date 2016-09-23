@@ -25,11 +25,16 @@ class live {
     }
 
     sendMessage(options, callback){
-
         callback = callback || function(){};
         let form = new formData();
         for(name in options){
-            form.append(name, options[name]);
+            if(typeof options[name] == 'object'){
+                for (var i = 0; i < options[name].length; i++) {
+                    form.append(name+"[]", options[name][i]);
+                };
+            }else{
+                form.append(name, options[name]);
+            }
         }
         fetch(config.MANAGER_HOST, { method: 'POST', body: form })
         .then(function(res) {
