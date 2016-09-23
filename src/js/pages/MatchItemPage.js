@@ -105,7 +105,7 @@ class MatchItemPage extends Component {
         return {
             0: {name: "竞猜未开", className:"", bsStyle:"default"},
             1: {name: "竞猜开启", className:" label-info", bsStyle:"info"},
-            9: {name: "竞猜结束", className:" label-danger", bsStyle:"danger"},
+            9: {name: "竞猜结束", className:" label-inverse", bsStyle:"danger"},
         }
     }
 
