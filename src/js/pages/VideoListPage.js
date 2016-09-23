@@ -116,7 +116,7 @@ class VideoListPage extends React.Component {
         const {list} = this.state;
         return (
             <div className="resource-video-box">
-                <div className="box-title">视频列表 <i onClick={this.getUploadList.bind(this)} className="fa fa-refresh" aria-hidden="true"></i> </div>
+                <div className="box-title" onClick={this.getUploadList.bind(this)}>视频列表 <i className="fa fa-refresh" aria-hidden="true"></i> </div>
                 <div className="box">
                     <div className="box-list">
                         { this.renderList(list) }

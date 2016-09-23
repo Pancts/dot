@@ -223,7 +223,7 @@ class GuessPage extends React.Component {
         const {list} = this.state;
         return (
             <div className="resource-guess-box">
-                <div className="box-title">竞猜列表</div>
+                <div className="box-title" onClick={this.getGuessInfo.bind(this, this.match_id, null)}>竞猜列表 <i className="fa fa-refresh" aria-hidden="true"></i></div>
                 <div className="box">
                     <div className="box-list">
                         { this.renderList(this.state.list) }
