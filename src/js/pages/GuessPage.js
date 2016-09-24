@@ -106,13 +106,31 @@ class GuessPage extends React.Component {
         });
     }
 
-    handlerUpdateStatus(guess_id, e){
+    handlerSelectResult(guess_id, e){
         let self = this;
         live.sendMessage({
             r: "appguessapi/update",
             guess_id: guess_id,
-            status: e.target.value,
+            result_id: e.target.value,
+            status: 9,
         }, function(error, message, data){
+            if(error)alert(message);
+            else{
+                self.getGuessInfo(self.match_id)
+            }
+        });
+    }
+
+    handlerUpdateStatus(guess_id, e){
+        let self = this;
+        let data = {
+            r: "appguessapi/update",
+            guess_id: guess_id,
+            status: e.target.value,
+        }
+        if(data.status == 1) data.start_time = parseInt(new Date().getTime() / 1000)
+        if(data.status == 9) data.end_time = parseInt(new Date().getTime() / 1000)
+        live.sendMessage(data, function(error, message, data){
             if(error)alert(message);
             else{
                 self.getGuessInfo(self.match_id)
@@ -164,8 +182,11 @@ class GuessPage extends React.Component {
             let typeItem = self.getType(item.type)
             let activeStatus = self.getStatus(item.status);
             let title = item.type == 'guess_result' ? "谁将取得比赛胜利？" : item.title
-            let optionHtml = item.options.map((option, index) => {
-                return <li>{index + 1}. {option.title} </li>
+            let optionHtml = item.options.map((option, n) => {
+                let checked = item.result_id == option.option_id ? true : false;
+                let right = checked ? <span className="option-right-result">√</span> : ""
+                let input = item.status == 9 ? <input type="radio" onClick={self.handlerSelectResult.bind(this, item.guess_id)} checked={checked} value={option.option_id} name={`option_${index}`}/> : ""
+                return <li className="option-li"><label>{input} {n + 1}. {option.title} </label> {right} </li>
             })
             let statusOption = Object.keys(self.getStatusArr()).map((status) => {
                 let statusItem = self.getStatus(status);

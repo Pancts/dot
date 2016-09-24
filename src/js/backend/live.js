@@ -40,6 +40,7 @@ class live {
         .then(function(res) {
             return res.text();
         }).then(function(body) {
+            //console.info(options)
             //console.info(body)
             try{
                 var data = JSON.parse(body);
