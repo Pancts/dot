@@ -31,7 +31,7 @@ class LiveManagerPage extends Component {
             matchTime: 0,
             fixMatchTime: false,
             formatTime: "",
-            activeTab: "redpacket",
+            activeTab: "video",
         };
         this.imageSavePath = "./";
         this.tabs = {

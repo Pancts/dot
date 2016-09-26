@@ -169,6 +169,7 @@ class RedPacketPage extends React.Component {
         let data = {}
         data.title = this.refs.redpacket_title.getDOMNode().value
         data.type = this.refs.redpacket_type.getDOMNode().value
+        data.status = this.refs.redpacket_status.getDOMNode().value
         data.score_count = this.state.score_count
         if(data.type == 'fixed'){
             data.score_single = this.state.score_single
@@ -290,14 +291,21 @@ class RedPacketPage extends React.Component {
                     <textarea ref="redpacket_title" rows="3" id="redpacket-title"  placeholder="竞猜红包描述" ></textarea> 
                 </div>
                 <div className="redpacket-info-type">
-                    类型：
+                    类型
                     <select ref="redpacket_type" onChange={this.handlerSelectType.bind(this)} className="redpacket-type">
                         {
                             Object.keys(this.getTypeArr()).map((type, index) => {
-                                if(type != 'redpacket_result'){
-                                    let item = self.getType(type)
-                                    return <option value={type}>{item.name}</option>
-                                }
+                                let item = self.getType(type)
+                                return <option value={type}>{item.name}</option>
+                            })
+                        }
+                    </select>
+                    &nbsp;&nbsp;状态
+                    <select ref="redpacket_status" className="redpacket-status">
+                        {
+                            Object.keys(this.getStatusArr()).map((status, index) => {
+                                let item = self.getStatus(status)
+                                return <option value={status}>{item.name}</option>
                             })
                         }
                     </select>
