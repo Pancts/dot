@@ -186,7 +186,7 @@ class GuessPage extends React.Component {
                 let checked = item.result_id == option.option_id ? true : false;
                 let right = checked ? <span className="option-right-result">√</span> : ""
                 let input = item.status == 9 ? <input type="radio" onClick={self.handlerSelectResult.bind(this, item.guess_id)} checked={checked} value={option.option_id} name={`option_${index}`}/> : ""
-                return <li className="option-li"><label>{input} {n + 1}. {option.title} </label> {right} </li>
+                return <li className="option-li">{input} {n + 1}. {option.title} {right} </li>
             })
             let statusOption = Object.keys(self.getStatusArr()).map((status) => {
                 let statusItem = self.getStatus(status);
