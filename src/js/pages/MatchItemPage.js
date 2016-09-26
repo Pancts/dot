@@ -162,6 +162,7 @@ class MatchItemPage extends Component {
             r: "appguessapi/updatebymatchid",
             match_id: item.match_id,
             type: "guess_result",
+            score: 10,
             status: key,
         }, function(){
             self.getGuessInfo(self.props.match_pid, function(guess){

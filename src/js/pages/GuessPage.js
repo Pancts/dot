@@ -47,6 +47,23 @@ class GuessPage extends React.Component {
         }
     }
 
+    getScore(value){
+        let arr = this.getScoreArr();
+        if(arr.hasOwnProperty(value)){
+            return arr[value];
+        }else{
+            return {};
+        }
+    }
+
+    getScoreArr(){
+        return {
+            10: {name: "10", className:"", bsStyle:"default"},
+            20: {name: "20", className:"", bsStyle:"info"},
+            50: {name: "50", className:"", bsStyle:"success"},
+        }
+    }
+
     getStatus(value){
         let arr = this.getStatusArr();
         if(arr.hasOwnProperty(value)){
@@ -142,6 +159,7 @@ class GuessPage extends React.Component {
         let self = this;
         let inputTitle = this.refs.guess_textarea.getDOMNode()
         let inputType = this.refs.guess_type.getDOMNode()
+        let inputScore = this.refs.guess_score.getDOMNode()
         let inputOption1 = this.refs.guess_option_1.getDOMNode()
         let inputOption2 = this.refs.guess_option_2.getDOMNode()
         let inputOption3 = this.refs.guess_option_3.getDOMNode()
@@ -156,6 +174,7 @@ class GuessPage extends React.Component {
         let data = {options: []}
         data.title = inputTitle.value
         data.type = inputType.value
+        data.score = inputScore.value
         data.options.push(inputOption1.value)
         data.options.push(inputOption2.value)
         if(inputOption3.value) data.options.push(inputOption3.value)
@@ -202,6 +221,7 @@ class GuessPage extends React.Component {
                     <ul className="guess-option"> {optionHtml} </ul>
                     <span className={`label label-type ${typeItem.className}`}>{typeItem.name}</span>
                     <select className={`label label-status ${activeStatus.className}`} onChange={this.handlerUpdateStatus.bind(this, item.guess_id)}>{statusOption}</select>
+                    <span className="label label-sorce">{item.score}</span>
                 </div>
             )
         });
@@ -216,7 +236,7 @@ class GuessPage extends React.Component {
                     <textarea ref="guess_textarea" rows="3" id="guess-title"  placeholder="竞猜问题描述" ></textarea> 
                 </div>
                 <div className="guess-info-type">
-                    竞猜类型：
+                    类型
                     <select ref="guess_type" className="guess-type">
                         {
                             Object.keys(this.getTypeArr()).map((type, index) => {
@@ -224,6 +244,15 @@ class GuessPage extends React.Component {
                                     let item = self.getType(type)
                                     return <option value={type}>{item.name}</option>
                                 }
+                            })
+                        }
+                    </select>
+                    &nbsp;&nbsp;积分
+                    <select ref="guess_score" className="guess-score">
+                        {
+                            Object.keys(this.getScoreArr()).map((score, index) => {
+                                let item = self.getScore(score)
+                                return <option value={score}>{item.name}</option>
                             })
                         }
                     </select>

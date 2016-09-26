@@ -322,18 +322,26 @@ $resource-box-input-height: 108px;
     .box {
         height: 360px;
     }
+    .label{
+        margin-left: 5px;
+    }
     .label-type{
+        margin-left: 0;
         padding: 6px;
     }
     .label-status{
         padding: 5px;
         border: none;
-        margin-left: 5px;
         option {
             font-size: 12px;
             background:#fff;
             color: #555;
             padding: 5px 5px;
         }
+    }
+    .label-sorce{
+        color: #f60;
+        border:1px #ddd solid;
+        padding: 5px;
     }
 }
