@@ -12,6 +12,7 @@ import drag from 'drag-and-drop-files';
 import $ from 'jquery';
 import VideoListPage from './VideoListPage';
 import GuessPage from './GuessPage';
+import RedPacketPage from './RedPacketPage';
 import util from '../utils/util';
 import EditorPage from './EditorPage';
 
@@ -30,7 +31,7 @@ class LiveManagerPage extends Component {
             matchTime: 0,
             fixMatchTime: false,
             formatTime: "",
-            activeTab: "guess",
+            activeTab: "redpacket",
         };
         this.imageSavePath = "./";
         this.tabs = {
@@ -39,6 +40,9 @@ class LiveManagerPage extends Component {
             },
             guess:{
                 "title": "竞猜",
+            },
+            redpacket:{
+                "title": "红包",
             }
         }
         ipcRenderer.on(channel, this.handlerSendImage.bind(this));
@@ -100,6 +104,7 @@ class LiveManagerPage extends Component {
         $('.live-list').height(winHeight - 200);
         $('.resource-video-box .box').height(winHeight - 200);
         $('.resource-guess-box .box').height(winHeight - 360);
+        $('.resource-redpacket-box .box').height(winHeight - 280);
     }
 
     getMatchMessage(id){
@@ -307,7 +312,7 @@ class LiveManagerPage extends Component {
         return list.map((item, index) => {
             let time = moment(item.create_time * 1000).format("YYYY-MM-DD HH:mm:ss");
             let screenshot = item.screenshot ? <img src={item.screenshot}/> : "";
-            let video = item.video_url ? (<video controls preload={false}><source src={item.video_url} type="video/mp4"/></video>) : "";
+            let video = item.video_url ? (<video controls preload="meta"><source src={item.video_url} type="video/mp4"/></video>) : "";
             let content = item.content + item.title;
             return (
                 <div className="live-item">
@@ -367,7 +372,11 @@ class LiveManagerPage extends Component {
                 <div className={this.state.activeTab == 'guess' ? 'active' : ''}>
                     <GuessPage 
                         matchId={this.state.match_id} 
-                        matchTime={ this.state.matchTime }
+                    />
+                </div>
+                <div className={this.state.activeTab == 'redpacket' ? 'active' : ''}>
+                    <RedPacketPage 
+                        matchId={this.state.match_id} 
                     />
                 </div>
             </div>
