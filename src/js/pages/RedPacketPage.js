@@ -174,6 +174,7 @@ class RedPacketPage extends React.Component {
         if(data.type == 'fixed'){
             data.score_single = this.state.score_single
         }else{
+            data.score_min = 1
             data.score_max = this.state.score_max
         }
         
