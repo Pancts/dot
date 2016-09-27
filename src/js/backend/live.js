@@ -10,6 +10,21 @@ class live {
 
     }
 
+    get(url, callback){
+        fetch(url)
+        .then(function(res) {
+            return res.text();
+        }).then(function(body) {
+            try{
+                var data = JSON.parse(body);
+                callback(null, data.message, data)
+            }catch(e){
+                console.error(e)
+                callback(true, e, null)
+            }
+        });
+    }
+
     post(url, options, callback){
         callback = callback || function(){};
         let form = [];
@@ -46,6 +61,7 @@ class live {
                 var data = JSON.parse(body);
                 callback(null, data.message, data.result)
             }catch(e){
+                console.error(e)
                 callback(true, e, null)
             }
         });

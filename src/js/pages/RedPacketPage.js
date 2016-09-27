@@ -90,9 +90,7 @@ class RedPacketPage extends React.Component {
             r: "appredpacketapi/list",
             match_id: self.match_id,
         }, function(error, message, data){
-            if(error){
-                alert(message)
-            }else{
+            if(!error){
                 callback(data.data)
             }
         });

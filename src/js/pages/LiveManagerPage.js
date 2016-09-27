@@ -110,16 +110,13 @@ class LiveManagerPage extends Component {
     getMatchMessage(id){
         let self = this;
         this.setState({match_id: id});
-        fetch(config.FRONTEND_HOST + '?r=match/getmatchmessage&create_time=1&match_id='+id)
-        .then(function(res) {
-            return res.json();
-        }).then(function(data) {
+        live.get(config.FRONTEND_HOST + '?r=match/getmatchmessage&create_time=1&match_id='+id, function(err, message, data){
             if(data.hasOwnProperty("code") && data.code==1){
                 self.setState({
                     list: data.result.data,
                 });
             }
-        });
+        })  
     }
 
     handlerSendMessage(){

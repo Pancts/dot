@@ -180,7 +180,6 @@ function createLiveWindow(option){
         width: 920,
         height: 720,
         title: option.title,
-        autoHideMenuBar: true,
         //autoHideMenuBar: true,
   });
   liveWindow.loadURL(`file://${__dirname}/live.html`);

@@ -33,10 +33,7 @@ class MatchItemPage extends Component {
     getMatchInfo(match_pid){
         match_pid = match_pid || this.props.match_pid;
         let self = this;
-        fetch(config.FRONTEND_HOST + '?r=match/getmatchinfo&no_cache=1&match_pid='+match_pid)
-        .then(function(res) {
-            return res.json();
-        }).then(function(data) {
+        live.get(config.FRONTEND_HOST + '?r=match/getmatchinfo&no_cache=1&match_pid='+match_pid, function(err, message, data){
             if(data.hasOwnProperty("code") && data.code==1){
                 self.getGuessInfo(self.props.match_pid, function(guess){
                     self.setState({
@@ -45,22 +42,16 @@ class MatchItemPage extends Component {
                     });
                 });
             }
-        });
+        })  
     }
 
     getGuessInfo(match_pid, callback){
         if(!callback) callback = function(){}
         let self = this;
-        fetch(config.FRONTEND_HOST + '?r=guess/getguess&no_cache=1&match_pid='+match_pid)
-        .then(function(res) {
-            return res.json();
-        }).then(function(data) {
-            if(data.hasOwnProperty("code") && data.code==1){
-                callback(data.result.data)
-            }else{
-                callback([], data.message)
-            }
-        });
+        live.get(config.FRONTEND_HOST + '?r=guess/getguess&no_cache=1&match_pid='+match_pid, function(err, message, data){
+            if(err) callback([], message)
+            else callback(data.result.data)
+        })    
     }
 
     getStatusArr(){
