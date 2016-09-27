@@ -28,7 +28,7 @@ class live {
         callback = callback || function(){};
         let form = new formData();
         for(name in options){
-            if(typeof options[name] == 'object'){
+            if(options[name] instanceof Array){
                 for (var i = 0; i < options[name].length; i++) {
                     form.append(name+"[]", options[name][i]);
                 };
