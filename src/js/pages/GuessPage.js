@@ -59,8 +59,8 @@ class GuessPage extends React.Component {
     getScoreArr(){
         return {
             10: {name: "10", className:"", bsStyle:"default"},
-            20: {name: "20", className:"", bsStyle:"info"},
-            50: {name: "50", className:"", bsStyle:"success"},
+            //20: {name: "20", className:"", bsStyle:"info"},
+            //50: {name: "50", className:"", bsStyle:"success"},
         }
     }
 

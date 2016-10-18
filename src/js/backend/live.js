@@ -56,7 +56,7 @@ class live {
             return res.text();
         }).then(function(body) {
             //console.info(options)
-            //console.info(body)
+            console.info(body)
             try{
                 var data = JSON.parse(body);
                 callback(null, data.message, data.result)

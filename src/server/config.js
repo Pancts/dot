@@ -18,7 +18,7 @@ if(env == "dev"){
     //正式环境
     config.MANAGER_HOST = 'http://match-manager-v.huya.com';
     config.FRONTEND_HOST = 'http://match-v.huya.com';
-    config.Live_HOST = 'http://lol.duowan.com/s/live/index.html';
+    config.Live_HOST = 'http://lol.duowan.com/s/live2/pc-live.html';
 }
 
 module.exports = config;
