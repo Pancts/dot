@@ -124,6 +124,8 @@ class PlayPage extends Component {
         media.on('pause', self.onPause.bind(this))
         media.on('waiting', self.onWaiting.bind(this))
         media.on('playing', self.onPlaying.bind(this))
+        media.on('rejected', self.printError.bind(this))
+        media.on('started', self.clearError.bind(this))
 
         $('#controls-timeline').on('click', function (e) {
             if($(e.target).data("item") == "controls-move"){
@@ -209,10 +211,11 @@ class PlayPage extends Component {
         if(err){
             console.error(err);
             hint.html("ERROR: " + err).show();
-            setTimeout(function(){
-                hint.html("").hide();
-            }, 3000)
         }
+    }
+
+    clearError(){
+        $("#video-error").html("").hide();
     }
 
     initImageSavePath(){
