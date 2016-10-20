@@ -131,7 +131,7 @@ ipcMain.on('open-play-window', function (event, option) {
 ipcMain.on('resize', function (e, options) {
     if (playWindow.isMaximized()) return
     var wid = playWindow.getSize()[0]
-    var hei = (wid / options.ratio) | 0
+    var hei = (wid / options.ratio + 30) | 0
     playWindow.setSize(wid || 720, hei || 400)
 })
 
