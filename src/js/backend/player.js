@@ -17,16 +17,24 @@ function player($video) {
     that.waitTimeOut = null;
 
     that.play = function(media){
+        console.time("loadedmetadata")
+        var playPromise = null;
         if (!media) {
-            $video.play()
+            playPromise = $video.play()
         }else{
             $video.style.display = "block";
             $video.src = media.path;
-            $video.play();
+            playPromise = $video.play();
         }
         that.playing = true
         that.emit('play') 
-
+        if (playPromise !== undefined) {
+            playPromise.then(function() {
+                that.emit('started')
+            }).catch(function(error) {
+                that.emit('rejected', error)
+            });
+        }
     }
 
     that.isPaused = function(){
@@ -81,45 +89,94 @@ function player($video) {
         return that.duration;
     }
 
-    $video.addEventListener('loadedmetadata', function () {
+    $video.addEventListener('loadstart', function (event) {
+        that.emit('loadstart', event)
+    }, false)
+
+    $video.addEventListener('durationchange', function (event) {
+        that.emit('durationchange', event)
+    }, false)
+
+    $video.addEventListener('loadeddata', function (event) {
+        that.emit('loadeddata', event)
+    }, false)
+
+    $video.addEventListener('loadedmetadata', function (event) {
+        console.timeEnd('loadedmetadata');
         that.width = $video.videoWidth
         that.height =  $video.videoHeight
         that.ratio = that.width / that.height
         that.duration = $video.duration
-        that.emit('metadata')
+        that.emit('metadata', event)
     }, false)
 
-    $video.addEventListener('seeked', function () {
-        that.emit('seeked')
+    $video.addEventListener('progress', function (event) {
+        that.emit('progress', event);
+        //console.info(event.target.webkitVideoDecodedByteCount)
     }, false)
 
-    $video.addEventListener('seeking', function () {
-        that.emit('seeking')
+    $video.addEventListener('seeked', function (event) {
+        that.emit('seeked', event)
     }, false)
 
-    $video.addEventListener('waiting', function () {
-        that.waitTimeOut = setTimeout(function(){
-            that.emit('waiting')
+    $video.addEventListener('seeking', function (event) {
+        that.emit('seeking', event)
+    }, false)
+
+    $video.addEventListener('waiting', function (event) {
+        that.waitTimeOut = setTimeout(function(event){
+            that.emit('waiting', event)
             that.waitTimeOut = null
         }, 500)
     }, false)
 
-    $video.addEventListener('playing', function () {
+    $video.addEventListener('playing', function (event) {
         if(that.waitTimeOut !== null){
             clearTimeout(that.waitTimeOut)
             that.waitTimeOut = null
         }else{
-            that.emit('playing')
+            that.emit('playing', event)
         }
     }, false)
 
-    $video.addEventListener('ended', function () {
+    $video.addEventListener('ended', function (event) {
         atEnd = true
         that.playing = false
-        that.emit('pause')
-        that.emit('ended')
+        that.emit('pause', event)
+        that.emit('ended', event)
     }, false)
 
+    $video.addEventListener('suspend', function (event) {
+        that.emit('suspend', event)
+    }, false)
+
+    $video.addEventListener('abort', function (event) {
+        that.emit('abort', event)
+    }, false)
+
+    $video.addEventListener('emptied', function (event) {
+        that.emit('emptied', event)
+    }, false)
+
+    $video.addEventListener('play', function (event) {
+        that.emit('play', event)
+    }, false)
+
+    $video.addEventListener('pause', function (event) {
+        that.emit('pause', event)
+    }, false)
+
+    $video.addEventListener('canplay', function (event) {
+        that.emit('canplay', event)
+    }, false)
+
+    $video.addEventListener('canplaythrough', function (event) {
+        that.emit('canplaythrough', event)
+    }, false)
+
+    $video.addEventListener('timeupdate', function (event) {
+        that.emit('timeupdate', event)
+    }, false)
     
     return that
 }
